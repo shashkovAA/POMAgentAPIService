@@ -30,7 +30,8 @@ public class POMAgentAPIClient {
 		switch (actionServiceName) {
 		case "EmptyContactList": 
 								EmptyContactList emptyContactList = new EmptyContactList(params);
-								webServiceResponse = emptyContactList.getResponseString();
+								//webServiceResponse = emptyContactList.getResponseString();
+								webServiceResponse = emptyContactList.getResponseResult();
 								break;
 		
 		}

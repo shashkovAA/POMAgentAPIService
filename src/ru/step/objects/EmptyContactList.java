@@ -9,6 +9,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
+import org.w3c.dom.NodeList;
+
 public class EmptyContactList extends POMWebServiceOperation{
 	private final String actionServiceName = "EmptyContactList";;
 	private SOAPMessage response;
@@ -68,6 +70,41 @@ public class EmptyContactList extends POMWebServiceOperation{
 	
 	public String getResponseString() {
 		return convertSOAPMessageToString(response); 
+	}
+
+	public String getResponseResult() {
+		// TODO Auto-generated method stub
+		return convertSOAPMessageToResult(response); 
+	}
+
+	private String convertSOAPMessageToResult(SOAPMessage response) {
+		
+		SOAPBody body = null;
+		
+    	try {
+			body = response.getSOAPBody();
+		} catch (SOAPException except) {
+			getLogger().error(except.getMessage());
+		}
+    	NodeList list = null;
+    	String totalContacts = "-1";
+    	String soapResponseString = convertSOAPMessageToString(response);
+    	
+    	String partResponse = soapResponseString.substring(0,soapResponseString.indexOf(namespaceURI));
+    	String responseNamespace = partResponse.substring(partResponse.lastIndexOf(':') + 1, partResponse.lastIndexOf('='));
+    	
+    	//Find namespace from Response. Example: It is [ns1] from  xmlns:ns1="http://services.pim.avaya.com/CmpMgmt/"
+    	list = body.getElementsByTagName(responseNamespace + ":TotalContacts");
+    	
+    	if (list.getLength()!=0)
+    		try {
+    			totalContacts = list.item(0).getTextContent();
+    		} catch (Exception except){
+    			getLogger().error(except.getMessage());
+    			getLogger().debug(printErrorStackTrace(except));
+    		}
+    	
+    	return totalContacts;
 	}
 
 }
