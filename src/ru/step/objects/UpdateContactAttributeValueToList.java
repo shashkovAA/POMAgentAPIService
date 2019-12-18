@@ -1,5 +1,6 @@
 package ru.step.objects;
 
+import java.util.ArrayList;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
@@ -8,17 +9,27 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
-public class EmptyContactList extends POMWebServiceOperation{
-	private final String actionServiceName = "EmptyContactList";;
+public class UpdateContactAttributeValueToList extends POMWebServiceOperation{
+
+	private final String actionServiceName = "UpdateContactAttributeValueToList";;
 	private SOAPMessage response;
-	
+	private ArrayList<String> params;
+	private String contactID;
 	private String contactListName;
+	private String attributeName;
+	private String attributeValue;
 	
-	public 	EmptyContactList(String contactListName){
+	
+	public 	UpdateContactAttributeValueToList(String contactID, String contactListName, String attributeName, String attributeValue){
+		this.contactID = contactID;
 		this.contactListName = contactListName;
-		getLogger().info("Run request for POM WebService:" + actionServiceName);		
-	}
+		this.attributeName = attributeName;
+		this.attributeValue = attributeValue;
 		
+		getLogger().info("Run request for POM WebService:" + actionServiceName);
+				
+	}
+
 	@Override
 	public void createSoapEnvelope(SOAPMessage soapMessage) {
 		SOAPPart soapPart = soapMessage.getSOAPPart();
@@ -34,21 +45,17 @@ public class EmptyContactList extends POMWebServiceOperation{
 			soapBody = envelope.getBody();
 			    		
     		soapBodyElem = soapBody.addChildElement(actionServiceName, namespace);		    		
+        	soapBodyElem.addChildElement("ContactID", namespace).addTextNode(contactID);
         	soapBodyElem.addChildElement("ContactListName", namespace).addTextNode(contactListName);
+        	soapBodyElem.addChildElement("AttributeName", namespace).addTextNode(attributeName);
+        	soapBodyElem.addChildElement("AttributeValue", namespace).addTextNode(attributeValue);
 		} catch (SOAPException except) {
 			getLogger().error(except.getMessage());
 			getLogger().debug(printErrorStackTrace(except));
 		}
   
 	/* Example of Request
-	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:agen="http://services.pim.avaya.com/AgentAPI/">
-    <soapenv:Header/>
-    <soapenv:Body>
-      <agen:EmptyContactList>
-         <agen:ContactListName>rshb_test1</agen:ContactListName>
-      </agen:EmptyContactList>
-    </soapenv:Body>
-	</soapenv:Envelope>
+	
 		*/
     }	
 	

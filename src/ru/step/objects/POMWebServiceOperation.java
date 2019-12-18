@@ -32,17 +32,17 @@ public abstract class POMWebServiceOperation {
     	SOAPMessage           soapRequest  = null;
     	SOAPMessage           soapResponse = null;
         try {
-            // Создание SOAP Connection
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ SOAP Connection
         	soapFactory = SOAPConnectionFactory.newInstance();
             soapConnect = soapFactory.createConnection();
 
-            // Создание SOAP Message Request
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ SOAP Message Request
             soapRequest  = createSOAPRequest(actionServiceName);
             
             getLogger().info("Request SOAP Message for " + actionServiceName + ":");
             getLogger().info(convertSOAPMessageToString(soapRequest));
             
-            // Получение SOAP Message Response
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ SOAP Message Response
             soapResponse = soapConnect.call(soapRequest, soapUrl);
             
             getLogger().info("Response SOAP Message for " + actionServiceName + ":");
@@ -73,7 +73,7 @@ public abstract class POMWebServiceOperation {
         MimeHeaders headers = soapMessage.getMimeHeaders();
         headers.addHeader("SOAPAction", soapAction);
         
-        // Определение авторизации сервиса
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         String loginPassword = getProperty("epm.login") + ":" + getProperty("epm.password");
         Base64 codec = new Base64();
         String auth = new String(codec.encodeBase64(loginPassword.getBytes()));
@@ -92,15 +92,15 @@ public abstract class POMWebServiceOperation {
         Transformer        transformer;
         StringWriter stringResult = new StringWriter();
         try {
-            // Создание XSLT-процессора
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ XSLT-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             transformerFactory = TransformerFactory.newInstance();
             transformer = transformerFactory.newTransformer();
             
-            // Получение содержимого ответа
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             Source content;
             content = soapResponse.getSOAPPart().getContent();
             
-            // Определение выходного потока в stringResult
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ stringResult
             StreamResult result = new StreamResult(stringResult);
             transformer.transform(content, result);
 
@@ -119,6 +119,7 @@ public abstract class POMWebServiceOperation {
 	
 	
 	public String getProperty(String propName) {
+		
 		String prop = null;
 		try {
 		prop = System.getProperty(propName);

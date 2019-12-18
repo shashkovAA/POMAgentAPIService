@@ -12,63 +12,60 @@ import java.util.Properties;
 import org.apache.logging.log4j.Logger;
 
 import ru.step.objects.EmptyContactList;
+import ru.step.objects.GetContactAttributeValueFromList;
 import ru.step.objects.MyLogger;
+import ru.step.objects.UpdateContactAttributeValueToList;
 
 
 
 public class POMAgentAPIClient {
-	private String actionServiceName;
+	private final String PROPERTYFILE = "epm.properties";
+	
 	private final static Properties properties = new Properties();
-	private ArrayList<String> params = new ArrayList<String>();
 	private String webServiceResponse;
-	public POMAgentAPIClient(String[] args) {
+	
+	
+	public POMAgentAPIClient() {
 		
 		MyLogger.initLogger();
 		
-		getProgramAttributes(args);
-		
-		switch (actionServiceName) {
-		case "EmptyContactList": 
-								EmptyContactList emptyContactList = new EmptyContactList(params);
-								webServiceResponse = emptyContactList.getResponseString();
-								break;
-		
-		}
-		System.out.println(webServiceResponse);
+		loadProperties();
 	}
+	
+	public String emptyContactList(String contactListName){
+		EmptyContactList emptyContactList = new EmptyContactList(contactListName);
+		webServiceResponse = emptyContactList.getResponseString();
+		getLogger().info(webServiceResponse);
+		return webServiceResponse;
+
+	}	
 		
-	private void getProgramAttributes(String[] args) {
+			
+	public String updateContactAttributeValueToList(String contactID, String contactListName, String attributeName, String attributeValue){
 		
-		if (args.length >= 1) 
-			loadProperties(args[0]);  	
-        else {
-        	getLogger().error("Missing first mandatory program attributes: <epm_config_filename>.");
-        	getLogger().error("Note: Program attributes is <epm_config_filename> <service_method> <params> [params]");
-        	System.exit(0);
-        }
+		UpdateContactAttributeValueToList updateContactAttributeValueToList = new UpdateContactAttributeValueToList(contactID, contactListName, attributeName, attributeValue);
+		webServiceResponse = updateContactAttributeValueToList.getResponseString();
 		
-		if (args.length >= 2)
-			actionServiceName = args[1];
-        else {
-        	getLogger().warn("Missing second mandatory program attributes: <service_method>.");
-        	System.exit(0);
-        	
-        }
-        if (args.length >= 3) {
-        	        	
-        	for (int i=2; i< args.length; i++)
-        		params.add(args[i]);	     	
-        } 
-        
+		getLogger().info(webServiceResponse);
+		return webServiceResponse;
+	}
+	
+	public String getContactAttributeValueFromList(String contactID, String contactListName, String attributeName){
+		
+		GetContactAttributeValueFromList getContactAttributeValueFromList = new GetContactAttributeValueFromList(contactID, contactListName, attributeName);
+		webServiceResponse = getContactAttributeValueFromList.getResponseString();
+		
+		getLogger().info(webServiceResponse);
+		return webServiceResponse;
 	}
 	
 	
-	private void loadProperties(String fileName) {   	
+	private void loadProperties() {   	
 
 		try{
-	   	  	  FileInputStream fis = new FileInputStream(fileName);
+	   	  	  FileInputStream fis = new FileInputStream(PROPERTYFILE);
 		      properties.load( fis );
-		      getLogger().debug("Getting properties from file [" + fileName + "]:");
+		      getLogger().debug("Getting properties from file [" + PROPERTYFILE + "]:");
 		      
 		      for (Enumeration names = properties.propertyNames(); names.hasMoreElements();) {
 		      	String key = (String) names.nextElement();
@@ -86,7 +83,6 @@ public class POMAgentAPIClient {
 	   }
 	
 	
-	
 	private Logger getLogger() {		
 	    return MyLogger.log;
 	}
@@ -99,8 +95,11 @@ public class POMAgentAPIClient {
 	
 	public static void main(String[] args) {
 		
-		POMAgentAPIClient client = new POMAgentAPIClient(args);
+		POMAgentAPIClient client = new POMAgentAPIClient();
+				
+		String result = client.updateContactAttributeValueToList("1001", "TestList", "retrycount", "2");
 		
 	}
-
+	
 }
+
